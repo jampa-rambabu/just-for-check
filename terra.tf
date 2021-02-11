@@ -13,20 +13,20 @@ provider "aws" {
   region = var.reg
 }
 #Creating the vpc
-resource "aws_key_pair" "ram_aws" {
-  key_name = "ram_aws"
+resource "aws_key_pair" "ram_aws1" {
+  key_name = "ram_aws1"
   public_key = file(var.key_p)
 }
 output "AWS_Link" {
   //value = concat([aws_instance.ubuntu.public_dns,""],[":8080/spring-mvc-example",""])
-  value = format("Access the AWS hosted app from here: %s%s", aws_instance.ram_aws.public_dns, ":8080/PersistentWebApp")
+  value = format("Access the AWS hosted app from here: %s%s", aws_instance.ram_aws1.public_dns, ":8080/PersistentWebApp")
 }
-resource "aws_instance" "ram_aws" {
-  key_name = aws_key_pair.ram_aws.key_name
+resource "aws_instance" "ram_aws1" {
+  key_name = aws_key_pair.ram_aws1.key_name
   ami = "ami-047a51fa27710816e"
   instance_type = "t2.micro"
   tags = {
-    Name = "ram_aws"
+    Name = "ram_aws1"
   }
   connection {
     type = "ssh"
