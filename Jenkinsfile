@@ -1,8 +1,8 @@
-node{
-
-   def tomcatWeb = '/opt/apache-tomcat-9.0.43/webapps'
-   def tomcatBin = '/opt/apache-tomcat-9.0.43/bin'
-   def tomcatStatus = ''
+pipeline
+{
+   agent any
+    stages
+	{
    stage('SCM Checkout'){
      git 'https://github.com/jampa-rambabu/Dockerwebapp1.git'
    }
@@ -23,12 +23,25 @@ node{
                )
 '''
    }*/
-   stage('Deploy to Tomcat'){
-      sh "sudo cp  /var/lib/jenkins/workspace/pipelineTomcat/target/PersistentWebApp.war ${tomcatWeb}/"
-   }
-      stage ('Start Tomcat Server') {
-         sleep(time:5,unit:"SECONDS") 
-         sh "${tomcatBin}/startup.sh"
-         sleep(time:100,unit:"SECONDS")
-   }
+      stage('test')
+	    {
+		steps
+		    {
+    			withCredentials([string(credentialsId: 'acc', variable: 'access')]) { //set SECRET with the credential content
+        		//echo "My secret text is '${access}'"
+				withCredentials([string(credentialsId: 'sec', variable: 'secr')]) { //set SECRET with the credential content
+        			//echo "My secret text is '${secr}'"
+					withCredentials([file(credentialsId: 'kp', variable: 'k_p')]) {
+						withCredentials([file(credentialsId: 'kp2', variable: 'k_p2')]) {
+				sh 'terraform init -no-color'
+				sh 'terraform apply -auto-approve -no-color -var "acc=$access" -var "sec=$secr" -var "key_p=$k_p" -var "key_p2=$k_p2"'
+			}
+    		}
+				}
+			}
+		}
+	    }
+	}
+}
+   
 }
