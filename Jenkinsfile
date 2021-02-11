@@ -1,29 +1,22 @@
 pipeline
 {
-   agent any
+    agent any
+	environment{
+        PATH = "/opt/maven/apache-maven-3.6.3/bin:$PATH"
+	}
     stages
 	{
-   stage('SCM Checkout'){
-     git 'https://github.com/jampa-rambabu/Dockerwebapp1.git'
-   }
-   stage('Compile-Package-create-war-file'){
-      // Get maven home path
-      def mvnHome =  tool name: 'Maven', type: 'maven'   
-      sh "${mvnHome}/bin/mvn package"
-      }
-/*   stage ('Stop Tomcat Server') {
-               bat ''' @ECHO OFF
-               wmic process list brief | find /i "tomcat" > NUL
-               IF ERRORLEVEL 1 (
-                    echo  Stopped
-               ) ELSE (
-               echo running
-                  "${tomcatBin}\\shutdown.bat"
-                  sleep(time:10,unit:"SECONDS") 
-               )
-'''
-   }*/
-      stage('test')
+	stage("SCM Checkout"){
+            steps{
+               git credentialsId: '3dd0fa55-769d-4326-af17-46c823c096ee', url: 'https://github.com/jampa-rambabu/Dockerwebapp1.git'
+        }
+    }
+    stage("Compile A Pacakge"){
+        steps{
+            sh "mvn package"
+        }
+    }
+	stage('test')
 	    {
 		steps
 		    {
@@ -42,4 +35,3 @@ pipeline
 		}
 	    }
 	}
-}
